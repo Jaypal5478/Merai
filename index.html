@@ -1,0 +1,510 @@
+<!doctype html>
+<!--
+  =====================================================================
+  MERAI — Coming Soon
+  Single self-contained page (all CSS + JS inline). Host as-is on GitHub Pages.
+
+  ---------------------------------------------------------------------
+  EDITABLE VALUES  (search this file for "EDIT:" to jump to each one)
+  ---------------------------------------------------------------------
+  • Launch date ....... data-launch="2026-11-01T10:00:00+05:30"
+                        (ISO 8601 with timezone offset. Leave it empty
+                        — data-launch="" — to hide the countdown.)
+  • Instagram ......... https://www.instagram.com/merai.luxury
+  • WhatsApp .......... https://wa.me/919016999061
+  • Phone ............. +91 84888 51444  (tel:+918488851444)
+  =====================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MERAI — Coming Soon</title>
+  <meta name="description" content="MERAI — handcrafted luxury men's ethnic wear. A new home for every thread and motif, made to honour tradition. Coming soon.">
+  <meta name="theme-color" content="#4A2418">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MERAI — Coming Soon">
+  <meta property="og:description" content="Handcrafted men's ethnic wear. Woven by hand, worn with pride. Be the first to step inside.">
+
+  <!-- Favicon: gold "M" on brown -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%234A2418'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Georgia,serif' font-size='40' fill='%23C9A063'%3EM%3C/text%3E%3C/svg%3E">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------------------------------------------------------------
+       Brand tokens
+       --------------------------------------------------------------- */
+    :root {
+      --brown: #4A2418;
+      --brown-dark: #2E150D;
+      --gold: #C9A063;
+      --gold-light: #F2E3C4;
+      --white: #FFFFFF;
+
+      --serif: "Cormorant", "Cormorant Garamond", Georgia, serif;
+      --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+      --frame-inset: 22px;
+      --pad-x: 40px;
+
+      /* Vertical rhythm scales with viewport HEIGHT so the whole page
+         fits on one screen (above the fold) on laptops and phones. */
+      --pad-y: clamp(18px, 5vh, 48px);       /* frame → content */
+      --gap-block: clamp(16px, 4vh, 48px);   /* header / main / footer */
+      --space-lg: clamp(14px, 3.6vh, 36px);
+      --space-md: clamp(12px, 2.8vh, 28px);
+      --space-sm: clamp(10px, 2.2vh, 22px);
+      --h1-size: clamp(44px, min(9vw, 10.5vh), 92px);
+      --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    /* ---------------------------------------------------------------
+       Base
+       --------------------------------------------------------------- */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      background: var(--brown);          /* no white flash on overscroll */
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100svh;
+      background: var(--brown);
+      color: var(--gold-light);
+      font-family: var(--sans);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap-block);
+      padding: calc(var(--frame-inset) + var(--pad-y)) var(--pad-x);
+      text-align: center;
+      position: relative;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible {
+      outline: 1px solid var(--gold);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    /* ---------------------------------------------------------------
+       Background layers (fixed so they never scroll or repeat)
+       --------------------------------------------------------------- */
+    /* 1. Soft gold glow near top third + dark glow at the bottom */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 33%, rgba(201, 160, 99, 0.16), transparent 70%),
+        radial-gradient(ellipse 90% 50% at 50% 105%, var(--brown-dark), transparent 75%);
+    }
+
+    /* 2. Woven diagonal crosshatch, fading out toward the edges */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background:
+        repeating-linear-gradient(45deg,  var(--gold) 0 1px, transparent 1px 22px),
+        repeating-linear-gradient(-45deg, var(--gold) 0 1px, transparent 1px 22px);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+              mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+    }
+
+    /* 3. Thin inset gold frame */
+    .frame {
+      position: absolute;               /* wraps the whole page, so content never runs under it */
+      inset: var(--frame-inset);
+      border: 1px solid rgba(201, 160, 99, 0.35);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    header, main, footer { position: relative; z-index: 1; width: 100%; }
+
+    /* ---------------------------------------------------------------
+       Top — logo
+       --------------------------------------------------------------- */
+    .logo {
+      display: inline-block;
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1;
+      letter-spacing: 0.42em;
+      padding-left: 0.42em;              /* balances trailing letter-spacing */
+      color: var(--gold);
+    }
+    .tagline {
+      margin: 12px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5em;
+      padding-left: 0.5em;
+      color: var(--gold-light);
+      opacity: 0.75;
+    }
+
+    /* ---------------------------------------------------------------
+       Middle
+       --------------------------------------------------------------- */
+    main {
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 0 0 var(--space-md);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+    }
+    .eyebrow span { padding-left: 0.4em; }   /* optical centring */
+    .eyebrow::before,
+    .eyebrow::after {
+      content: "";
+      width: 36px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+      flex: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: var(--h1-size);
+      line-height: 0.98;
+      letter-spacing: -0.005em;
+      color: var(--white);
+      overflow-wrap: break-word;
+    }
+    h1 em {
+      display: block;
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .lede {
+      max-width: 460px;
+      margin: var(--space-md) auto 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--gold-light);
+      opacity: 0.85;
+    }
+
+    .ornament {
+      display: block;
+      width: 120px;
+      height: 16px;
+      margin: var(--space-lg) auto var(--space-md);
+      color: var(--gold);
+    }
+
+    /* Countdown */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: clamp(16px, 4vw, 36px);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .countdown[hidden] { display: none; }
+    .countdown li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 64px;
+    }
+    .countdown .num {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(30px, min(6vw, 6.5vh), 52px);
+      line-height: 1;
+      color: var(--white);
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
+    }
+    .countdown .label {
+      margin-top: 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      padding-left: 0.3em;
+      color: var(--gold);
+    }
+
+    /* ---------------------------------------------------------------
+       Bottom
+       --------------------------------------------------------------- */
+    footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .social {
+      display: flex;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .social a {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 160, 99, 0.45);
+      color: var(--gold);
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    .social a:hover,
+    .social a:focus-visible {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--brown);
+    }
+    .social a:focus-visible { border-radius: 50%; }
+    .social svg { width: 18px; height: 18px; }
+
+    address {
+      font-style: normal;
+      font-size: 12px;
+      line-height: 1.8;
+      letter-spacing: 0.06em;
+      color: var(--gold-light);
+      opacity: 0.75;
+    }
+    address .chunk { display: inline-block; white-space: nowrap; }
+    address .phone {
+      display: inline-block;
+      margin-top: 6px;
+      transition: color 0.3s ease;
+    }
+    address .phone:hover,
+    address .phone:focus-visible { color: var(--gold); }
+
+    /* ---------------------------------------------------------------
+       Load animation — fade up, staggered (respects reduced motion)
+       --------------------------------------------------------------- */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: fadeUp 0.9s var(--ease) both;
+        animation-delay: calc(var(--i, 0) * 0.12s);
+      }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: none; }
+      }
+    }
+
+    /* ---------------------------------------------------------------
+       Responsive
+       --------------------------------------------------------------- */
+    @media (max-width: 480px) {
+      :root {
+        --frame-inset: 10px;
+        --pad-x: 24px;
+      }
+      .lede { font-size: 14.5px; }
+
+      .countdown {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        gap: 4px;
+      }
+      .countdown li { flex: 1; min-width: 0; }
+      .countdown .label {
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        padding-left: 0.16em;
+      }
+    }
+
+    /* Short screens (laptops ≤ ~760px tall, small phones): tighten the
+       vertical rhythm so everything stays above the fold. */
+    @media (max-height: 760px) {
+      :root {
+        --pad-y: clamp(14px, 3vh, 28px);
+        --gap-block: clamp(12px, 2.6vh, 28px);
+        --space-lg: clamp(10px, 2.4vh, 24px);
+        --space-md: clamp(8px, 2vh, 20px);
+        --space-sm: clamp(8px, 1.6vh, 16px);
+        --h1-size: clamp(41px, min(9vw, 9.5vh), 92px);
+      }
+      .tagline { margin-top: 8px; }
+      .lede, address { line-height: 1.6; }
+      address .phone { margin-top: 2px; }
+    }
+    @media (max-height: 760px) and (max-width: 480px) {
+      .lede { font-size: 13.5px; }
+      .social a { width: 36px; height: 36px; }
+    }
+
+    /* Very narrow phones (≈320px): keep "Woven by hand," on one line */
+    @media (max-width: 340px) {
+      :root { --h1-size: 41px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame" aria-hidden="true"></div>
+
+  <!-- ============================ TOP ============================ -->
+  <header>
+    <!--
+      LOGO: to use an image logo instead, replace the <p class="logo"> below with e.g.
+      <img src="logo.svg" alt="MERAI" width="180" height="40" class="reveal" style="--i:0">
+    -->
+    <p class="logo reveal" style="--i:0">MERAI</p>
+    <p class="tagline reveal" style="--i:0">Touch of Luxury</p>
+  </header>
+
+  <!-- ============================ MIDDLE ============================ -->
+  <main>
+    <p class="eyebrow reveal" style="--i:1"><span>Coming Soon</span></p>
+
+    <h1 class="reveal" style="--i:2">Woven by hand,<em>worn with pride.</em></h1>
+
+    <p class="lede reveal" style="--i:3">
+      A new home for handcrafted men's ethnic wear is almost ready.
+      Every thread, every motif, made to honour tradition.
+      Be the first to step inside.
+    </p>
+
+    <!-- Decorative ornament: line · dot ◇ dot · line -->
+    <svg class="ornament reveal" style="--i:4" viewBox="0 0 120 16" fill="none" aria-hidden="true">
+      <line x1="0" y1="8" x2="44" y2="8" stroke="currentColor" stroke-width="1"/>
+      <circle cx="49" cy="8" r="1" fill="currentColor"/>
+      <path d="M60 2 L66 8 L60 14 L54 8 Z" stroke="currentColor" stroke-width="1"/>
+      <circle cx="60" cy="8" r="1.4" fill="currentColor"/>
+      <circle cx="71" cy="8" r="1" fill="currentColor"/>
+      <line x1="76" y1="8" x2="120" y2="8" stroke="currentColor" stroke-width="1"/>
+    </svg>
+
+    <!-- EDIT: launch date (ISO 8601 with timezone). Empty = countdown hidden. -->
+    <ul class="countdown reveal" style="--i:5" id="countdown"
+        data-launch="2026-11-01T10:00:00+05:30"
+        aria-label="Time until launch" hidden>
+      <li><span class="num" data-unit="days">00</span><span class="label">Days</span></li>
+      <li><span class="num" data-unit="hours">00</span><span class="label">Hours</span></li>
+      <li><span class="num" data-unit="minutes">00</span><span class="label">Minutes</span></li>
+      <li><span class="num" data-unit="seconds">00</span><span class="label">Seconds</span></li>
+    </ul>
+  </main>
+
+  <!-- ============================ BOTTOM ============================ -->
+  <footer>
+    <ul class="social reveal" style="--i:6">
+      <li>
+        <!-- EDIT: Instagram link -->
+        <a href="https://www.instagram.com/merai.luxury" target="_blank" rel="noopener" aria-label="MERAI on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.3" cy="6.7" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <!-- EDIT: WhatsApp link (wa.me/<country code + number>) -->
+        <a href="https://wa.me/919016999061" target="_blank" rel="noopener" aria-label="Chat with MERAI on WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3.6 20.4l1.2-4.1A8.6 8.6 0 1 1 8 19.3z"/>
+            <path d="M9.2 8.3c.2-.4.5-.5.8-.5h.5l.9 2-.6.8a.4.4 0 0 0 0 .5 5.4 5.4 0 0 0 2.4 2.4.4.4 0 0 0 .5 0l.8-.6 2 .9v.5c0 .3-.1.6-.5.8-.7.4-1.5.5-2.3.2a8 8 0 0 1-4.7-4.7c-.3-.8-.2-1.6.2-2.3z"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+
+    <address class="reveal" style="--i:7">
+      <span class="chunk">9, Ground Floor Level -6,</span>
+      <span class="chunk">West Zone Office Circle,</span>
+      <span class="chunk">150 Feet Ring Road, Rajkot 360005</span>
+      <br>
+      <!-- EDIT: phone number -->
+      <a class="phone" href="tel:+918488851444">+91 84888 51444</a>
+    </address>
+  </footer>
+
+  <script>
+    /* -----------------------------------------------------------------
+       Countdown — reads the target from #countdown[data-launch].
+       Hidden until the first tick, and hidden for good once the date
+       has passed or if the attribute is empty / invalid.
+       ----------------------------------------------------------------- */
+    (function () {
+      var el = document.getElementById('countdown');
+      if (!el) return;
+
+      var target = Date.parse((el.getAttribute('data-launch') || '').trim());
+      if (isNaN(target)) return;
+
+      var parts = {};
+      el.querySelectorAll('[data-unit]').forEach(function (n) {
+        parts[n.getAttribute('data-unit')] = n;
+      });
+
+      function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+      var timer;
+      function tick() {
+        var diff = target - Date.now();
+        if (diff <= 0) {
+          el.hidden = true;
+          clearInterval(timer);
+          return false;
+        }
+        var s = Math.floor(diff / 1000);
+        parts.days.textContent    = pad(Math.floor(s / 86400));
+        parts.hours.textContent   = pad(Math.floor(s / 3600) % 24);
+        parts.minutes.textContent = pad(Math.floor(s / 60) % 60);
+        parts.seconds.textContent = pad(s % 60);
+        return true;
+      }
+
+      if (tick()) {
+        el.hidden = false;
+        timer = setInterval(tick, 1000);
+      }
+    })();
+  </script>
+</body>
+</html>
