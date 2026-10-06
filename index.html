@@ -293,15 +293,17 @@
       :root {
         --frame-inset: 12px;
         --pad-x: 24px;
-        --h1-a: clamp(30px, min(8.4vw, 5.6vh), 48px);
+        /* two clean lines: "Woven by hand," / "worn with pride." */
+        --h1-a: clamp(22px, min(7.2vw, 5vh), 48px);
+        --logo-h: clamp(46px, 8.4vh, 76px);
       }
-      /* Stack: logo → photo (fills the spare height) → headline → footer */
+      /* Stack: logo + dates -> photo (fills the spare height) -> headline -> contact */
       body {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: var(--space-sm);
-        padding: calc(var(--frame-inset) + var(--pad-y)) calc(var(--frame-inset) + 12px);
+        padding: calc(var(--frame-inset) + var(--pad-y)) calc(var(--frame-inset) + 14px);
         text-align: center;
       }
       .content { display: contents; }        /* lets header / main / footer and .photo share one column */
@@ -310,51 +312,57 @@
       main    { order: 3; }
       footer  { order: 4; justify-content: center; }
 
-      .brand { flex-direction: column; gap: 6px; }
+      .brand { flex-direction: column; gap: 4px; }
       .brand .rule { display: none; }
-      .brand .where { font-size: clamp(15px, 2.8vh, 20px); line-height: 1.3; }
-      .lede { max-width: 440px; font-size: 14px; }
-      address, address .pair { align-items: center; justify-content: center; }
-      address { font-size: 13px; }
+      .brand .where { font-size: clamp(14px, 2.5vh, 19px); line-height: 1.3; }
+      h1 { line-height: 1.1; }
+      .lede { max-width: 340px; margin-top: var(--space-sm); font-size: 13.5px; line-height: 1.6; }
+
+      /* Contact: everything centred, pin icon dropped to save height */
+      address { align-items: center; text-align: center; font-size: 13px; line-height: 1.4; }
+      address .pair { justify-content: center; }
+      address > .row .ico { display: none; }
+      address > .row { justify-content: center; text-align: center; }
+      address .ico { width: 30px; height: 30px; }
 
       /* Photo: centred, takes whatever height is left, never pushes the page */
       .photo {
         flex: 1 1 0;
-        min-height: 84px;
+        min-height: 90px;
         width: 100%;
         max-width: 360px;
+        margin-bottom: 16px;                 /* room for the card hanging off the bottom */
       }
       .photo img {
         position: absolute;
         inset: 0;
         margin: auto;
         height: 100%;
-        max-height: 420px;
+        max-height: 460px;
         width: auto;
         max-width: 100%;
       }
-      /* Card sits across the bottom of the photo, centred */
+      /* Card overlaps the bottom edge of the photo, centred */
       .card {
         left: 0;
         right: 0;
-        bottom: 5%;
+        bottom: -16px;
         margin: 0 auto;
-        width: min(94%, 300px);
+        width: min(96%, 310px);
         font-size: 10.5px;
+        line-height: 1.4;
         padding: 7px 10px;
         text-align: center;
       }
     }
-    /* Very narrow phones (≈320px) */
-    @media (max-width: 340px) {
-      :root { --h1-a: 28px; }
-      .lede { font-size: 13px; }
-    }
-    /* Very short phones (iPhone SE-size and below) */
-    @media (max-width: 900px) and (max-height: 600px) {
-      :root { --logo-h: 52px; --frame-inset: 10px; }
-      address { font-size: 12px; }
-      .card { font-size: 9.5px; padding: 5px 8px; }
+    /* Short phones: tighten further */
+    @media (max-width: 900px) and (max-height: 700px) {
+      :root { --logo-h: 44px; --frame-inset: 10px; }
+      .lede { font-size: 12.5px; line-height: 1.5; }
+      address { font-size: 12px; line-height: 1.3; }
+      address .ico { width: 26px; height: 26px; }
+      .card { font-size: 9.5px; padding: 5px 8px; bottom: -14px; }
+      .photo { margin-bottom: 14px; min-height: 70px; }
     }
   </style>
 </head>
