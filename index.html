@@ -8,9 +8,6 @@
   ---------------------------------------------------------------------
   EDITABLE VALUES  (search this file for "EDIT:" to jump to each one)
   ---------------------------------------------------------------------
-  • Launch date ....... data-launch="2026-11-01T10:00:00+05:30"
-                        (ISO 8601 with timezone offset. Leave it empty
-                        — data-launch="" — to hide the countdown.)
   • Instagram ......... https://www.instagram.com/merai.luxury
   • WhatsApp .......... https://wa.me/918488851444
   • Phone ............. +91 84888 51444  (tel:+918488851444)
@@ -180,33 +177,6 @@
       opacity: 0.9;
     }
 
-    /* Countdown */
-    .countdown {
-      display: flex;
-      gap: clamp(20px, 3vw, 40px);
-      margin: var(--space-lg) 0 0;
-      padding: 0;
-      list-style: none;
-    }
-    .countdown[hidden] { display: none; }
-    .countdown li { display: flex; flex-direction: column; align-items: flex-start; }
-    .countdown .num {
-      font-family: var(--numerals);
-      font-weight: 400;
-      font-size: clamp(28px, min(3.6vw, 6vh), 46px);
-      line-height: 1;
-      color: var(--white);
-      font-variant-numeric: lining-nums tabular-nums;
-      font-feature-settings: "lnum" 1, "tnum" 1;
-    }
-    .countdown .label {
-      margin-top: 8px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.3em;
-      color: var(--gold);
-    }
-
     /* Footer: social + address */
     footer {
       display: flex;
@@ -317,32 +287,45 @@
       :root {
         --frame-inset: 12px;
         --pad-x: 24px;
-        --h1-a: clamp(32px, min(8.4vw, 6.4vh), 52px);
+        --h1-a: clamp(30px, min(8.4vw, 5.6vh), 48px);
       }
+      /* Stack: logo → photo (fills the spare height) → headline → footer */
       body {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: 1fr;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
         padding: calc(var(--frame-inset) + var(--pad-y)) calc(var(--frame-inset) + 12px);
         text-align: center;
       }
-      .content { align-items: center; }
-      .brand { flex-direction: column; gap: 8px; }
-      .brand .rule { display: none; }
-      .brand .where { font-size: clamp(16px, 3.4vh, 22px); line-height: 1.3; }
-      .lede { max-width: 440px; font-size: 14px; }
-      .countdown {
-        width: 100%;
-        max-width: 320px;
-        gap: 4px;
-      }
-      .countdown li { flex: 1; min-width: 0; align-items: center; }
-      .countdown .num { font-size: clamp(28px, 4.6vh, 40px); }
-      .countdown .label { font-size: 9px; letter-spacing: 0.16em; padding-left: 0.16em; }
-      footer { align-items: center; }
-      .brand .where br { display: none; }   /* "Rajkot – Coming Soon" on one line */
+      .content { display: contents; }        /* lets header / main / footer and .photo share one column */
+      header  { order: 1; }
+      .photo  { order: 2; }
+      main    { order: 3; }
+      footer  { order: 4; align-items: center; }
 
-      /* The photo is desktop / wide-screen only (no room on phones) */
-      .photo { display: none; }
+      .brand { flex-direction: column; gap: 6px; }
+      .brand .rule { display: none; }
+      .brand .where { font-size: clamp(15px, 2.8vh, 20px); line-height: 1.3; }
+      .brand .where br { display: none; }   /* "Rajkot – Coming Soon" on one line */
+      .lede { max-width: 440px; font-size: 14px; }
+
+      /* Photo: centred, takes whatever height is left, never pushes the page */
+      .photo {
+        flex: 1 1 0;
+        min-height: 84px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .photo img {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        height: 100%;
+        max-height: 420px;
+        width: auto;
+        max-width: 100%;
+      }
     }
     /* Very narrow phones (≈320px) */
     @media (max-width: 340px) {
@@ -352,7 +335,6 @@
     /* Very short phones (iPhone SE-size and below) */
     @media (max-width: 900px) and (max-height: 600px) {
       :root { --logo-h: 52px; --frame-inset: 10px; }
-      .countdown .num { font-size: 26px; }
       address { font-size: 11px; }
     }
   </style>
@@ -379,15 +361,6 @@
         Be the first to step inside.
       </p>
 
-      <!-- EDIT: launch date (ISO 8601 with timezone). Empty = countdown hidden. -->
-      <ul class="countdown reveal" style="--i:3" id="countdown"
-          data-launch="2026-11-01T10:00:00+05:30"
-          aria-label="Time until launch" hidden>
-        <li><span class="num" data-unit="days">00</span><span class="label">Days</span></li>
-        <li><span class="num" data-unit="hours">00</span><span class="label">Hours</span></li>
-        <li><span class="num" data-unit="minutes">00</span><span class="label">Minutes</span></li>
-        <li><span class="num" data-unit="seconds">00</span><span class="label">Seconds</span></li>
-      </ul>
     </main>
 
     <footer>
@@ -429,47 +402,5 @@
     <img class="reveal" style="--i:2" src="assets/hero-photo.png" alt="" width="496" height="706">
   </div>
 
-  <script>
-    /* -----------------------------------------------------------------
-       Countdown — reads the target from #countdown[data-launch].
-       Hidden until the first tick, and hidden for good once the date
-       has passed or if the attribute is empty / invalid.
-       ----------------------------------------------------------------- */
-    (function () {
-      var el = document.getElementById('countdown');
-      if (!el) return;
-
-      var target = Date.parse((el.getAttribute('data-launch') || '').trim());
-      if (isNaN(target)) return;
-
-      var parts = {};
-      el.querySelectorAll('[data-unit]').forEach(function (n) {
-        parts[n.getAttribute('data-unit')] = n;
-      });
-
-      function pad(n) { return n < 10 ? '0' + n : String(n); }
-
-      var timer;
-      function tick() {
-        var diff = target - Date.now();
-        if (diff <= 0) {
-          el.hidden = true;
-          clearInterval(timer);
-          return false;
-        }
-        var s = Math.floor(diff / 1000);
-        parts.days.textContent    = pad(Math.floor(s / 86400));
-        parts.hours.textContent   = pad(Math.floor(s / 3600) % 24);
-        parts.minutes.textContent = pad(Math.floor(s / 60) % 60);
-        parts.seconds.textContent = pad(s % 60);
-        return true;
-      }
-
-      if (tick()) {
-        el.hidden = false;
-        timer = setInterval(tick, 1000);
-      }
-    })();
-  </script>
 </body>
 </html>
